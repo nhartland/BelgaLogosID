@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from PIL import Image
+
 
 # BelgaLogos webpage
 webpage_url = "http://www-sop.inria.fr/members/Alexis.Joly/BelgaLogos/BelgaLogos.html"
@@ -112,3 +114,37 @@ def scrape_testdata():
 
     total_df = pd.concat(frames)
     return total_df
+
+
+def filter_by_boundingbox(metadata, min_dim, max_dim):
+    """"
+    This filters an dataset (a pandas DataFrame from read_metadata), ensuing it
+    only contains bounding-boxes with:
+
+            min_dim < (height or width) <= max_dim
+
+    """
+    # Shortcut
+    ds = metadata
+    # Ensure all bounding-boxes are at least {min_dim} pixels wide and high
+    condition = (ds.bbx2-ds.bbx1 >  min_dim) & (ds.bby2 - ds.bby1 > min_dim) \
+              & (ds.bbx2-ds.bbx1 <= max_dim) & (ds.bby2 - ds.bby1 <= max_dim)
+    filtered_ds = ds[condition]
+    return filtered_ds
+
+
+def load_bb_images(metadata):
+    """
+        Given a pandas DataFrame containing the BelgaLogos metadata, return a
+        new DataFrame consisting of the corresponding bounded-box images
+        labelling the logo.
+    """
+
+    def load_image(row):
+        filename = os.path.join(data_folder, 'images', row['image_file'])
+        im = Image.open(filename)
+        bb = im.crop((row['bbx1'], row['bby1'], row['bbx2'], row['bby2']))
+        return bb
+
+    images = metadata.apply(load_image, axis=1)
+    return images
