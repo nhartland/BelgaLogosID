@@ -18,6 +18,10 @@ thought-process followed in the analysis.
 
 ## Contents
 
+### Exploration of the dataset
 1. [Parsing and basic data validation](parsing.ipynb)
 2. [Initial study of the logo bounding-boxes](image_bb.ipynb)
 2. [The automotive and fashion brand dataset](dataset.ipynb)
+
+### Model survey and feasibility studies
+1. [Survey of model options](models.ipynb)
