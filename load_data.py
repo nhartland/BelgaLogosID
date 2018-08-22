@@ -142,7 +142,7 @@ def load_bb_images(metadata):
 
     def load_image(row):
         filename = os.path.join(data_folder, 'images', row['image_file'])
-        im = Image.open(filename)
+        im = Image.open(filename).convert('RGB')
         bb = im.crop((row['bbx1'], row['bby1'], row['bbx2'], row['bby2']))
         return bb
 

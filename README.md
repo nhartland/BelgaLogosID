@@ -4,7 +4,7 @@ The
 [BelgaLogos](http://www-sop.inria.fr/members/Alexis.Joly/BelgaLogos/BelgaLogos.html)
 dataset consists of 10,000 images from the [Belga](http://www.belga.be/) press
 agency, annotated with the location and name of brand logos appearing in the
-images. In total annotations for 26 separate logos are provided in the dataset,
+images. In total annotations for 37 separate logos are provided in the dataset,
 covering a variety of businesses.
 
 In this repository I study how this dataset can be applied to the training of a
@@ -20,3 +20,4 @@ thought-process followed in the analysis.
 
 1. [Parsing and basic data validation](parsing.ipynb)
 2. [Initial study of the logo bounding-boxes](image_bb.ipynb)
+2. [The automotive and fashion brand dataset](dataset.ipynb)
