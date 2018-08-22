@@ -1,5 +1,5 @@
 import pandas as pd
-from IPython.display import display, HTML
+from IPython.display import HTML
 
 # Formatting for tables
 # Original source: Eric Moyer (https://github.com/epmoyer/ipy_table/issues/24)
@@ -27,3 +27,14 @@ def metadata_count_summary(md):
     summary.columns = ['#OK', '#Junk', 'Total']
     summary.index.name = 'Logo name'
     return summary
+
+
+def compute_bb_properties(md):
+    """ Given an input DataFrame consisting of BelgaLogo metadata, compute
+    general properties (width, height, size) of the associated bounding-boxes. """
+    image_widths  = md.apply(lambda row: row['bbx2'] - row['bbx1'], axis=1)
+    image_heights = md.apply(lambda row: row['bby2'] - row['bby1'], axis=1)
+    image_area  = image_widths * image_heights
+    image_properties = pd.concat([image_widths, image_heights, image_area], axis = 1)
+    image_properties.columns = ['Width', 'Height', 'Area']
+    return image_properties
