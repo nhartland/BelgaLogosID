@@ -1,15 +1,17 @@
 import pandas as pd
 from IPython.display import HTML
 
+
 # Formatting for tables
 # Original source: Eric Moyer (https://github.com/epmoyer/ipy_table/issues/24)
-# Modified by nh to include captions
-def multi_table(table_list, captions=None):
+# Modified by nh to include captions, correctly formatted for GitHub
+def multi_table(_table_list_, captions=None):
     ''' Accepts a list of pandas dataframes and returns a table which contains
     each dataframe as a table in a cell. An optional captions argument
     annotates each dataframe before rendering them to a table.
     '''
-    if captions != None:
+    table_list = _table_list_
+    if captions is not None:
         if len(captions) != len(table_list):
             raise ValueError("multi_table requires a caption list as long as the table list")
         captioned_tables = []
@@ -17,11 +19,19 @@ def multi_table(table_list, captions=None):
             captioned_tables.append((table_list[i].style.set_caption(captions[i])))
         table_list = captioned_tables
 
+    # This is required to get captions rendering on GitHub
+    # See: https://github.com/airbnb/knowledge-repo/issues/250
+    html = []
+    for table in table_list:
+        table_html = '\n'.join([line.lstrip() for line in table.render().split('\n')])
+        html.append(table_html)
+
     return HTML(
         '<table><tr style="background-color:white;">' +
-        ''.join(['<td>' + table._repr_html_() + '</td>' for table in table_list]) +
+        ''.join(['<td>' + ihtml + '</td>' for ihtml in html]) +
         '</tr></table>'
     )
+
 
 def metadata_count_summary(md):
     """ Given an input dataframe consisting of BelgaLogos metadata, generate a
