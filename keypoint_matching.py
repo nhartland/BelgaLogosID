@@ -5,6 +5,10 @@
 import cv2
 import numpy as np
 from sklearn.cluster import MeanShift, estimate_bandwidth
+from collections import namedtuple
+
+# Container for the result of a keypoint-finder
+KeypointSet = namedtuple('KeypointSet', ['image', 'keypoints', 'descriptors'])
 
 __DEBUG__ = False  # Debug flag for verbose output
 
@@ -95,32 +99,28 @@ def build_bounding_box(img1, img2, src_pts, dst_pts, MIN_INLIERS):
         return [np.int32(dst)]
 
 
-def get_matching_boundingbox(template_img, test_img,
-                    template_kp, test_kp, template_desc, test_desc,
-                    matcher, MIN_MATCHES, MIN_INLIERS):
+def get_matching_boundingbox(template, test, matcher, MIN_MATCHES, MIN_INLIERS):
     """
         This function performs a matching between two sets of keypoint descriptors.
         If successful, it returns the bounding-box of the matched keypoints in the target image.
         Takes as arguments
-            template_img:  The OpenCV image of the template to be matched.
-            test_img:      The OpenCV image of the test for matching to the template
-            template_kp:   The keypoints of the template image
-            test_kp:       The keypoints of the test image
-            template_desc: The keypoint descriptors of the template image
-            test_desc:     The keypoint descriptors of the test image
-            matcher:       The keypoint descriptors of the test image
+            template:    A KeypointSet object referring to the template to be matched
+            test:        A KeypointSet object referring to the test image for matching.
+            matcher:     The keypoint descriptors of the test image
+            MIN_MATCHES: The minimum number of matches for an acceptable boundingbox
+            MIN_INLIERS: The minimum number of inliers for an acceptable boundingbox
     """
     # Perform match
-    matches = matcher.match(template_desc, test_desc)
+    matches = matcher.match(template.descriptors, test.descriptors)
     if __DEBUG__ is True:
-        print(len(matches) / min(len(test_kp), len(template_kp)), " matches found")
+        print(len(matches) / min(len(template.keypoints), len(test.keypoints)), " matches found")
 
     # If there are sufficient matches, attempt to build a homography
-    if len(matches) >= MIN_MATCHES:  # Minimum number of matches required
+    if len(matches) >= MIN_MATCHES:
         # Get source and destination points for homography search
-        src_pts = np.float32([ template_kp[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
-        dst_pts = np.float32([ test_kp[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
-        bounding_box = build_bounding_box(template_img, test_img, src_pts, dst_pts, MIN_INLIERS)
+        src_pts = np.float32([ template.keypoints[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
+        dst_pts = np.float32([ test.keypoints[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
+        bounding_box = build_bounding_box(template.image, test.image, src_pts, dst_pts, MIN_INLIERS)
         if bounding_box is not None:
             return bounding_box
 
@@ -146,6 +146,8 @@ def bruteforce_match_clusters(img1, img2, finder, norm,
 
     # Compute keypoints and descriptors for template image
     template_keypoints, template_descriptors = finder.detectAndCompute(img1, None)
+    template = KeypointSet(img1, template_keypoints, template_descriptors)
+
     # Compute keypoint and descriptor clusters for target image
     kp_clusters, ds_clusters = meanshift_keypoint_clusters(img2, finder, quantile=QUANTILE)
 
@@ -154,12 +156,8 @@ def bruteforce_match_clusters(img1, img2, finder, norm,
 
     match_bounding_boxes = []
     for ic in range(len(kp_clusters)):
-        cluster_keypoints   = kp_clusters[ic]
-        cluster_descriptors = ds_clusters[ic]
-        bounding_box = get_matching_boundingbox(img1, img2,
-                                                template_keypoints, cluster_keypoints,
-                                                template_descriptors, cluster_descriptors,
-                                                bf, MIN_MATCHES, MIN_INLIERS)
+        cluster = KeypointSet(img2, kp_clusters[ic], ds_clusters[ic])
+        bounding_box = get_matching_boundingbox(template, cluster, bf, MIN_MATCHES, MIN_INLIERS)
         if bounding_box is not None:
             match_bounding_boxes.append(bounding_box)
 
