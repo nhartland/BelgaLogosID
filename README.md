@@ -26,3 +26,17 @@ thought-process followed in the analysis.
 ### Model survey and feasibility studies
 1. [Survey of model options](models.ipynb)
 2. [Keypoint matching feasibility study](keypoint.ipynb)
+
+## Running the notebooks
+
+The notebooks require the following python packages:
+ - numpy
+ - matplotlib
+ - scikit-learn
+ - beautifulsoup4
+ - OpenCV2
+
+To fetch the source data for the analysis, run `data/getdata.sh` which will
+download and decompress the BelgaLogos dataset images. 
+
+**Note: this is a moderately large dataset (~1GB)**.
