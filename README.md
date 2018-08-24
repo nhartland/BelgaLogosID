@@ -14,14 +14,15 @@ entries from automotive and fashion brands.
 The analysis is mostly documented in [Jupyter](http://jupyter.org/) notebooks,
 which document my analysis procedure step-by-step in detail. This repository is
 not meant only as a store of results, but also as a record of the
-thought-process followed in the analysis.
+thought-process followed in the analysis. 
 
 ## Contents
 
 ### Exploration of the dataset
 1. [Parsing and basic data validation](parsing.ipynb)
 2. [Initial study of the logo bounding-boxes](image_bb.ipynb)
-2. [The automotive and fashion brand dataset](dataset.ipynb)
+3. [The automotive and fashion brand dataset](dataset.ipynb)
 
 ### Model survey and feasibility studies
 1. [Survey of model options](models.ipynb)
+2. [Keypoint matching feasibility study](keypoint.ipynb)

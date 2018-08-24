@@ -133,18 +133,33 @@ def filter_by_boundingbox(metadata, min_dim, max_dim):
     return filtered_ds
 
 
-def load_bb_images(metadata):
+def load_images(metadata):
     """
-        Given a pandas DataFrame containing the BelgaLogos metadata, return a
-        new DataFrame consisting of the corresponding bounded-box images
-        labelling the logo.
+        Given a pandas DataFrame containing BelgaLogos metadata, return a
+        new DataFrame consisting of the corresponding images.
     """
 
     def load_image(row):
         filename = os.path.join(data_folder, 'images', row['image_file'])
         im = Image.open(filename).convert('RGB')
+        return im
+
+    images = metadata.apply(load_image, axis=1)
+    return images
+
+
+def load_bb_images(metadata):
+    """
+        Given a pandas DataFrame containing BelgaLogos metadata, return a
+        new DataFrame consisting of the corresponding images cropped to
+        their logo bounded-boxes.
+    """
+
+    def load_bounding_box(row):
+        filename = os.path.join(data_folder, 'images', row['image_file'])
+        im = Image.open(filename).convert('RGB')
         bb = im.crop((row['bbx1'], row['bby1'], row['bbx2'], row['bby2']))
         return bb
 
-    images = metadata.apply(load_image, axis=1)
+    images = metadata.apply(load_bounding_box, axis=1)
     return images
