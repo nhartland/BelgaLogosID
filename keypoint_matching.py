@@ -125,16 +125,6 @@ def get_matching_boundingbox(template, test, matcher, MIN_MATCHES, MIN_INLIERS):
             return bounding_box
 
 
-def draw_bounding_boxes(image, bounding_boxes):
-    """ For an input image and a list of bounding-boxes (given as a list of box
-    vertices) returns a new image annotating the input. """
-
-    annotated_image = image.copy()
-    for box in bounding_boxes:
-        cv2.polylines(annotated_image, box, True, 255, 3, cv2.LINE_AA)
-    return annotated_image
-
-
 def bruteforce_match_clusters(template_img, test_img, finder, norm,
                               QUANTILE=0.02, MIN_MATCHES=10, MIN_INLIERS=None):
     """
@@ -164,6 +154,7 @@ def bruteforce_match_clusters(template_img, test_img, finder, norm,
     # Set up brute-force matcher
     bf = cv2.BFMatcher(norm, crossCheck=True)
 
+    # Find matching bounding-boxes
     match_bounding_boxes = []
     for ic in range(len(kp_clusters)):
         cluster = KeypointSet(test_img, kp_clusters[ic], ds_clusters[ic])
@@ -171,6 +162,8 @@ def bruteforce_match_clusters(template_img, test_img, finder, norm,
         if bounding_box is not None:
             match_bounding_boxes.append(bounding_box)
 
-    return draw_bounding_boxes(test_img, match_bounding_boxes)
-
-
+    # Annotate image with bounding-boxes and return
+    annotated_image = test_img.copy()
+    for box in match_bounding_boxes:
+        cv2.polylines(annotated_image, box, True, 255, 3, cv2.LINE_AA)
+    return annotated_image

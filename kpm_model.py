@@ -2,7 +2,24 @@
 # for the BelgaLogos dataset.
 
 import keypoint_matching as kp_lib
+from collections import namedtuple
 import cv2
+
+# A container for detected objects
+DetectedObject = namedtuple("DetectedObject", ["label", "bounding_box"])
+
+
+def annotate_image_with_objects(image, detected_objects):
+    """
+        For an input image and a list of DetectedObject tuples,
+        returns a new image annotating the image with the detection
+        bounding-boxes.
+    """
+
+    annotated_image = image.copy()
+    for iobject in detected_objects:
+        cv2.polylines(annotated_image, iobject.bounding_box, True, 255, 3, cv2.LINE_AA)
+    return annotated_image
 
 
 class KeypointMatcher:
@@ -31,8 +48,7 @@ class KeypointMatcher:
         kp_clusters, ds_clusters = kp_lib.meanshift_keypoint_clusters(target_image, self.finder)
         n_clusters = len(kp_clusters)
         n_labels = len(self.labels)
-        match_bounding_boxes = []
-        match_labels = []
+        detected_objects = []
         for ic in range(n_clusters):
             for il in range(n_labels):
                 template = self.templates[il]
@@ -41,7 +57,7 @@ class KeypointMatcher:
                 bounding_box = kp_lib.get_matching_boundingbox(template, cluster, self.matcher,
                                                                MIN_MATCHES=10, MIN_INLIERS=10)
                 if bounding_box is not None:
-                    match_bounding_boxes.append(bounding_box)
-                    match_labels.append(label)
+                    new_object = DetectedObject(label, bounding_box)
+                    detected_objects.append(new_object)
                     break
-        return match_bounding_boxes, match_labels
+        return detected_objects
