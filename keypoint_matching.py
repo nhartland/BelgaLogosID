@@ -96,7 +96,8 @@ def build_bounding_box(template, test, matches, MIN_INLIERS):
         # No transformation found
         return None
     else:
-        h, w, _ = template.image.shape
+        h = template.image.shape[0]
+        w = template.image.shape[1]
         pts = np.float32([ [0, 0], [0, h-1], [w-1, h-1], [w-1, 0]]).reshape(-1, 1, 2)
         dst = cv2.perspectiveTransform(pts, M)
         dst = dst.reshape(4, 2)  # Reshape back to list of points
