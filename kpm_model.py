@@ -9,16 +9,27 @@ import cv2
 DetectedObject = namedtuple("DetectedObject", ["label", "bounding_box"])
 
 
-def annotate_image_with_objects(image, detected_objects):
+def annotate_image_with_objects(image, detected_objects, correct_match=None):
     """
         For an input image and a list of DetectedObject tuples,
         returns a new image annotating the image with the detection
         bounding-boxes.
+
+        `correct_match` is an optional input, consisting of a list of bools,
+        the same length as the number of detected objects. If an element is
+        True, then that bounding-box is rendered in green, if False it is
+        rendered in red.
     """
+    if correct_match == None:
+        correct_match = [True] * len(detected_objects)
+
+    colours = { True: (0, 255, 0),
+                False: (0, 0, 255)}
 
     annotated_image = image.copy()
-    for iobject in detected_objects:
-        cv2.polylines(annotated_image, iobject.bounding_box, True, 255, 3, cv2.LINE_AA)
+    for i, iobject in enumerate(detected_objects):
+        box_colour = colours[correct_match[i]]
+        cv2.polylines(annotated_image, [iobject.bounding_box], True, box_colour, 3, cv2.LINE_AA)
     return annotated_image
 
 
@@ -44,7 +55,7 @@ class KeypointMatcher:
         self.templates.append(template)
         self.labels.append(label)
 
-    def matching_bounding_boxes(self, target_image):
+    def detect_objects(self, target_image):
         kp_clusters, ds_clusters = kp_lib.meanshift_keypoint_clusters(target_image, self.finder)
         n_clusters = len(kp_clusters)
         n_labels = len(self.labels)

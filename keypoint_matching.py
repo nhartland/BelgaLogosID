@@ -96,7 +96,8 @@ def build_bounding_box(img1, img2, src_pts, dst_pts, MIN_INLIERS):
         h, w, _ = img1.shape
         pts = np.float32([ [0, 0], [0, h-1], [w-1, h-1], [w-1, 0]]).reshape(-1, 1, 2)
         dst = cv2.perspectiveTransform(pts, M)
-        return [np.int32(dst)]
+        dst = dst.reshape(4, 2)  # Reshape back to list of points
+        return np.int32(dst)
 
 
 def get_matching_boundingbox(template, test, matcher, MIN_MATCHES, MIN_INLIERS):
@@ -109,6 +110,8 @@ def get_matching_boundingbox(template, test, matcher, MIN_MATCHES, MIN_INLIERS):
             matcher:     The keypoint descriptors of the test image
             MIN_MATCHES: The minimum number of matches for an acceptable boundingbox
             MIN_INLIERS: The minimum number of inliers for an acceptable boundingbox
+        Returns:
+            A list of vertices specifying the bounding-box of the match
     """
     # Perform match
     matches = matcher.match(template.descriptors, test.descriptors)
@@ -165,5 +168,5 @@ def bruteforce_match_clusters(template_img, test_img, finder, norm,
     # Annotate image with bounding-boxes and return
     annotated_image = test_img.copy()
     for box in match_bounding_boxes:
-        cv2.polylines(annotated_image, box, True, 255, 3, cv2.LINE_AA)
+        cv2.polylines(annotated_image, [box], True, 255, 3, cv2.LINE_AA)
     return annotated_image
