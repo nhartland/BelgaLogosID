@@ -33,8 +33,9 @@ The notebooks require the following python packages:
  - numpy
  - matplotlib
  - scikit-learn
- - beautifulsoup4
+ - beautifulsoup4 + lxml
  - OpenCV2
+ - pillow
 
 To fetch the source data for the analysis, run `data/getdata.sh` which will
 download and decompress the BelgaLogos dataset images. 
