@@ -23,9 +23,12 @@ thought-process followed in the analysis.
 2. [Initial study of the logo bounding-boxes](image_bb.ipynb)
 3. [The automotive and fashion brand dataset](dataset.ipynb)
 
-### Model survey and feasibility studies
+### Model survey and feasibility study
 1. [Survey of model options](models.ipynb)
 2. [Keypoint matching feasibility study](keypoint.ipynb)
+
+### Implementation and validation
+1. [Implementation of model](implementation.ipynb)
 
 ## Running the notebooks
 
