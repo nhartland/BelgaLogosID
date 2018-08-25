@@ -125,7 +125,17 @@ def get_matching_boundingbox(template, test, matcher, MIN_MATCHES, MIN_INLIERS):
             return bounding_box
 
 
-def bruteforce_match_clusters(img1, img2, finder, norm,
+def draw_bounding_boxes(image, bounding_boxes):
+    """ For an input image and a list of bounding-boxes (given as a list of box
+    vertices) returns a new image annotating the input. """
+
+    annotated_image = image.copy()
+    for box in bounding_boxes:
+        cv2.polylines(annotated_image, box, True, 255, 3, cv2.LINE_AA)
+    return annotated_image
+
+
+def bruteforce_match_clusters(template_img, test_img, finder, norm,
                               QUANTILE=0.02, MIN_MATCHES=10, MIN_INLIERS=None):
     """
         This function attempts to locate all instances of the template image 'img1' in
@@ -145,24 +155,22 @@ def bruteforce_match_clusters(img1, img2, finder, norm,
     """
 
     # Compute keypoints and descriptors for template image
-    template_keypoints, template_descriptors = finder.detectAndCompute(img1, None)
-    template = KeypointSet(img1, template_keypoints, template_descriptors)
+    template_keypoints, template_descriptors = finder.detectAndCompute(template_img, None)
+    template = KeypointSet(template_img, template_keypoints, template_descriptors)
 
     # Compute keypoint and descriptor clusters for target image
-    kp_clusters, ds_clusters = meanshift_keypoint_clusters(img2, finder, quantile=QUANTILE)
+    kp_clusters, ds_clusters = meanshift_keypoint_clusters(test_img, finder, quantile=QUANTILE)
 
     # Set up brute-force matcher
     bf = cv2.BFMatcher(norm, crossCheck=True)
 
     match_bounding_boxes = []
     for ic in range(len(kp_clusters)):
-        cluster = KeypointSet(img2, kp_clusters[ic], ds_clusters[ic])
+        cluster = KeypointSet(test_img, kp_clusters[ic], ds_clusters[ic])
         bounding_box = get_matching_boundingbox(template, cluster, bf, MIN_MATCHES, MIN_INLIERS)
         if bounding_box is not None:
             match_bounding_boxes.append(bounding_box)
 
-    img3 = img2.copy()
-    for box in match_bounding_boxes:
-        cv2.polylines(img3, box, True, 255, 3, cv2.LINE_AA)
+    return draw_bounding_boxes(test_img, match_bounding_boxes)
 
-    return img3
+
