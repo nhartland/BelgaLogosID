@@ -65,19 +65,22 @@ def meanshift_keypoint_clusters(image, finder, quantile=0.02):
     return kp_clusters, ds_clusters
 
 
-def build_bounding_box(img1, img2, src_pts, dst_pts, MIN_INLIERS):
+def build_bounding_box(template, test, matches, MIN_INLIERS):
     """
-        Given a template image (img1) and a test image (img2) along with
-        a set of matched keypoints from img1 (src_pts) and img2 (dst_pts), this
-        function computes a homography transformation between the two pointsets.
-        This is then used to transform the bounding-box of the template image
-        into the space of the test image.
+        Given a template KeypointSet and a test KeypointSet along with
+        a set of matched keypoints (matches), this function computes a
+        homography transformation between the two pointsets. This is then used
+        to transform the bounding-box of the template image into the space of
+        the test image.
 
         This bounding-box is returned in a form suitable for drawing with cv2.polyLines.
 
         When specified, MIN_INLIERS requires that the homography finder has at least
         MIN_INLIERS point matches that can be used to construct a 'good fit' homography.
     """
+
+    src_pts = np.float32([ template.keypoints[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
+    dst_pts = np.float32([ test.keypoints[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
 
     # Find the homography between source and destination points
     M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 2)
@@ -93,7 +96,7 @@ def build_bounding_box(img1, img2, src_pts, dst_pts, MIN_INLIERS):
         # No transformation found
         return None
     else:
-        h, w, _ = img1.shape
+        h, w, _ = template.image.shape
         pts = np.float32([ [0, 0], [0, h-1], [w-1, h-1], [w-1, 0]]).reshape(-1, 1, 2)
         dst = cv2.perspectiveTransform(pts, M)
         dst = dst.reshape(4, 2)  # Reshape back to list of points
@@ -121,9 +124,7 @@ def get_matching_boundingbox(template, test, matcher, MIN_MATCHES, MIN_INLIERS):
     # If there are sufficient matches, attempt to build a homography
     if len(matches) >= MIN_MATCHES:
         # Get source and destination points for homography search
-        src_pts = np.float32([ template.keypoints[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
-        dst_pts = np.float32([ test.keypoints[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
-        bounding_box = build_bounding_box(template.image, test.image, src_pts, dst_pts, MIN_INLIERS)
+        bounding_box = build_bounding_box(template, test, matches, MIN_INLIERS)
         if bounding_box is not None:
             return bounding_box
 
