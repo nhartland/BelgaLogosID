@@ -29,6 +29,7 @@ thought-process followed in the analysis.
 
 ### Implementation and validation
 1. [Implementation of model](implementation.ipynb)
+2. [Validation framework](validation_framework.ipynb)
 
 ## Running the notebooks
 
