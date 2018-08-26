@@ -112,12 +112,13 @@ def study_matches(metadata, model):
     return pd.Series(count_dict)
 
 
-def validation_histogram(results, labels,  plot_label="Model performance summary"):
+def validation_histogram(ax, results, labels,  plot_label="Model performance summary"):
     """
         This function generates a performance analysis histogram from a list
         of results from the `study_matches` function.
 
         Takes as input:
+            ax: The matplotlib axis to draw to,
             results: The list of `study_matches` results,
             labels: A label for each of the entries in `results`
             (optional) plot_label: Titles the resulting plot.
@@ -133,7 +134,6 @@ def validation_histogram(results, labels,  plot_label="Model performance summary
         true_positives.append(result.true_positives/ic)
         false_positives.append(result.false_positives/ic)
 
-    fig, ax = plt.subplots()
     ind = np.arange(len(labels))
     barwidth = 0.35
     p1 = ax.bar(ind-barwidth, actual_positives, barwidth, color='b', bottom=0)
@@ -147,4 +147,3 @@ def validation_histogram(results, labels,  plot_label="Model performance summary
     ax.autoscale_view()
     ax.set_title(plot_label)
     ax.set_ylabel("Average count per image")
-    return fig
