@@ -122,10 +122,13 @@ def get_matching_boundingbox(template, test, matcher, MIN_MATCHES, MIN_INLIERS):
     n_test     = len(test.descriptors)
 
     # Sanity checks
-    if n_template < MIN_INLIERS or n_template < MIN_MATCHES:
+    if n_template < MIN_MATCHES or n_test < MIN_MATCHES:
         return None
-    if n_test < MIN_INLIERS or n_test < MIN_MATCHES:
-        return None
+
+    # Not enough points to satisfy inlier test
+    if MIN_INLIERS is not None:
+        if n_template < MIN_INLIERS or n_test < MIN_INLIERS:
+            return None
 
     # Perform match
     matches = matcher.match(template.descriptors, test.descriptors)
@@ -164,7 +167,6 @@ def bruteforce_match_clusters(template_img, test_img, finder, norm,
     template = KeypointSet(template_img, template_keypoints, template_descriptors)
 
     # Compute keypoint and descriptor clusters for target image
-    print(len(template.descriptors), len(test.descriptors))
     kp_clusters, ds_clusters = meanshift_keypoint_clusters(test_img, finder, quantile=QUANTILE)
 
     # Set up brute-force matcher
