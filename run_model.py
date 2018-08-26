@@ -31,7 +31,7 @@ def annotate_image(model, test_image):
     detected_objects = model.detect_objects(test_image)
     # Draw the images with a green box where there is a match, or a red box otherwise
     annotated_image = kpm.annotate_image_with_objects(test_image, detected_objects,
-                                                      text_colour=(0, 255, 0))
+                                                      text_colour=(0, 155, 0))
     return annotated_image
 
 
