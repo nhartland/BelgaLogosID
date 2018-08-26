@@ -15,7 +15,7 @@ def train_model_on_logos(model, logo_selection):
         data = json.load(json_file)
         for logo in data:
             # Get the logo image
-            logo_filename = os.path.join("data", "logos", logo.lower() + '.jpg')
+            logo_filename = os.path.join("data", logo_selection, logo.lower() + '.jpg')
             logo_image = cv2.imread(logo_filename)
             # Train the matcher on the image
             model.add_template(logo, logo_image)
@@ -30,7 +30,8 @@ def annotate_image(model, test_image):
     # Run the model over the image and validate the results with the above algorithm
     detected_objects = model.detect_objects(test_image)
     # Draw the images with a green box where there is a match, or a red box otherwise
-    annotated_image = kpm.annotate_image_with_objects(test_image, detected_objects)
+    annotated_image = kpm.annotate_image_with_objects(test_image, detected_objects,
+                                                      text_colour=(0, 255, 0))
     return annotated_image
 
 
@@ -50,7 +51,7 @@ def main(source, test_images):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('template_source', help="choice of source templates", choices=['logos'])
+    parser.add_argument('template_source', help="choice of source templates", choices=['logos', 'live_logos'])
     parser.add_argument('images', help="list of input images", nargs='*')
     args = parser.parse_args()
     main(args.template_source, args.images)
