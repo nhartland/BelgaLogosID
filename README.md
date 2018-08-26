@@ -4,7 +4,7 @@ The
 [BelgaLogos](http://www-sop.inria.fr/members/Alexis.Joly/BelgaLogos/BelgaLogos.html)
 dataset consists of 10,000 images from the [Belga](http://www.belga.be/) press
 agency, annotated with the location and name of brand logos appearing in the
-images. In total annotations for 37 separate logos are provided in the dataset,
+images. In total annotations for 26 separate logos are provided in the dataset,
 covering a variety of businesses.
 
 In this repository I study how this dataset can be applied to the training of a
@@ -20,17 +20,42 @@ thought-process followed in the analysis.
 
 ### Exploration of the dataset
 1. [Parsing and basic data validation](parsing.ipynb)
-2. [Initial study of the logo bounding-boxes](image_bb.ipynb)
+2. [Initial study of the logo bounding-boxes](boundingboxes.ipynb)
 3. [The automotive and fashion brand dataset](dataset.ipynb)
 
 ### Model survey and feasibility study
-1. [Survey of model options](models.ipynb)
-2. [Keypoint matching feasibility study](keypoint.ipynb)
+1. [Survey of model options](model_survey.ipynb)
+2. [Keypoint matching feasibility study](keypoint_study.ipynb)
 
 ### Implementation and validation
 1. [Implementation of model](implementation.ipynb)
 2. [Validation framework](validation_framework.ipynb)
-3. [Validation of model](validation.ipynb)
+3. [Validation of model (a): Collage of logos](collage_validation.ipynb)
+4. [Validation of model (b): BelgaLogos dataset](belgalogos_validation.ipynb)
+4. [Validation of model (c): BelgaLogos dataset, alternative templates](belgalogos_live_validation.ipynb)
+
+### Wrapping things up
+1. [Conclusion and summary](summary.md)
+
+## Running the model
+Included in this repository is a stand-alone version of the model which can be
+run on your own test images. Running it should be as simple as cloning this
+repository, and running (from the root directory of the repo):
+
+```Shell
+    ./run_model.py [training_set] <image filename1> ... <image filename N>
+```
+
+where `[training\_set]` can be either `logos` (which trains the model on 'ideal'
+versions of the logos) or 'live\_logos' (which trains the model on photographs of
+the logos).
+
+Here's an example:
+```Shell
+    ./run_model.py logos data/logos/collage.jpeg
+```
+
+![Collage](images/annotated_collage.jpeg)
 
 ## Running the notebooks
 
