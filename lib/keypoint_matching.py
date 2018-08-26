@@ -37,6 +37,7 @@ def meanshift_keypoint_labels(keypoints, quantile):
     bandwidth = estimate_bandwidth(point_locations, quantile=quantile)
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=True)
     ms.fit(point_locations)
+
     return ms.labels_,  max(ms.labels_)+1
 
 
@@ -117,6 +118,11 @@ def get_matching_boundingbox(template, test, matcher, MIN_MATCHES, MIN_INLIERS):
         Returns:
             A list of vertices specifying the bounding-box of the match
     """
+
+    # Some cluster are empty, resulting in `None` entries for the descriptor
+    if (template.descriptors is None) or (test.descriptors is None):
+        return None
+
     # Number of provided descriptors
     n_template = len(template.descriptors)
     n_test     = len(test.descriptors)
