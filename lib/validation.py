@@ -127,7 +127,7 @@ def validation_histogram(results, labels,  plot_label="Model performance summary
     true_positives = []
     false_positives = []
 
-    for iresult, result in enumerate(results()):
+    for iresult, result in enumerate(results):
         ic = result.image_count
         actual_positives.append(result.actual_positives/ic)
         true_positives.append(result.true_positives/ic)
