@@ -1,5 +1,6 @@
 # validation.py
 # code for the validation of the logo-detection model
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 import cv2
@@ -109,3 +110,39 @@ def study_matches(metadata, model):
                    "image_count": image_count}
 
     return pd.Series(count_dict)
+
+
+def validation_histogram(results_dict, plot_label="Model performance summary"):
+    """
+        Takes a dictionary of ('logo name', results) pairs, where 'results' are
+        pandas Series output from the 'study_matches' method.  This function
+        then generates and returns a performance analysis histogram.
+    """
+    # Set up plot data
+    labels = []
+    actual_positives = []
+    true_positives = []
+    false_positives = []
+
+    for logo, result in results_dict.items():
+        labels.append(logo)
+        ic = result.image_count
+        actual_positives.append(result.actual_positives/ic)
+        true_positives.append(result.true_positives/ic)
+        false_positives.append(result.false_positives/ic)
+
+    fig, ax = plt.subplots()
+    ind = np.arange(len(labels))
+    barwidth = 0.35
+    p1 = ax.bar(ind-barwidth, actual_positives, barwidth, color='b', bottom=0)
+    p2 = ax.bar(ind, true_positives, barwidth, color='g', bottom=0)
+    p3 = ax.bar(ind+barwidth, false_positives, barwidth, color='r', bottom=0)
+
+    ax.set_xticks(ind + barwidth / 2)
+    ax.set_xticklabels(labels)
+    ax.legend((p1[0], p2[0], p3[0]), ('Real logos', 'True positives', 'False positives'))
+    ax.yaxis.grid()
+    ax.autoscale_view()
+    ax.set_title(plot_label)
+    ax.set_ylabel("Average count per image")
+    return fig
