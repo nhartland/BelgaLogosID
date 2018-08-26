@@ -32,6 +32,7 @@ thought-process followed in the analysis.
 2. [Validation framework](validation_framework.ipynb)
 3. [Validation of model (a): Collage of logos](collage_validation.ipynb)
 4. [Validation of model (b): BelgaLogos dataset](belgalogos_validation.ipynb)
+4. [Validation of model (c): BelgaLogos dataset, alternative templates](belgalogos_validation.ipynb)
 
 ### Wrapping things up
 1. [Conclusion and summary](summary.md)
