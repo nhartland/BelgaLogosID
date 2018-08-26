@@ -46,8 +46,8 @@ repository, and running (from the root directory of the repo):
     ./run_model.py [training_set] <image filename1> ... <image filename N>
 ```
 
-where `[training\_set]` can be either `logos` (which trains the model on 'ideal'
-versions of the logos) or 'live\_logos' (which trains the model on photographs of
+where `[training_set]` can be either `logos` (which trains the model on 'ideal'
+versions of the logos) or `'live_logos'` (which trains the model on photographs of
 the logos).
 
 Here's an example:
