@@ -1,5 +1,4 @@
-# A class implementing a keypoint-matching object detector
-# for the BelgaLogos dataset.
+# A class implementing a keypoint-matching object detector for the BelgaLogos dataset.
 import lib.keypoint_matching as kpm
 from collections import namedtuple
 import cv2
@@ -34,6 +33,11 @@ def annotate_image_with_objects(image, detected_objects, correct_match=None):
 
 class KeypointMatcher:
     def __init__(self, finder, norm):
+        """
+            Constructor for the KeypointMatcher class, Takes as arguments an
+            openCV keypoint finder (`finder`) and an openCV norm (`norm`) to be
+            used in the matching.
+        """
         self.finder = finder
         self.norm   = norm
         self.matcher = cv2.BFMatcher(norm, crossCheck=True)
@@ -42,6 +46,14 @@ class KeypointMatcher:
         self.labels = []
 
     def add_template(self, label, image):
+        """
+            Adds a template image to 'train' the model to detect the template.
+            Takes as arguments a string 'label' to identify the logo, and an
+            openCV image to use as the template.
+
+            This method also takes care of generating the brightness-inverse
+            image.
+        """
         # Find template keypoints
         kp, desc = self.finder.detectAndCompute(image, None)
         template = kpm.KeypointSet(image, kp, desc)
@@ -55,6 +67,11 @@ class KeypointMatcher:
         self.labels.append(label)
 
     def detect_objects(self, target_image):
+        """
+            Detect objects in a target image. Takes as input only an openCV
+            image, in which the template objects are to be detected. Returns a
+            list of `DetectedObject` containers.
+        """
         kp_clusters, ds_clusters = kpm.meanshift_keypoint_clusters(target_image, self.finder)
         n_clusters = len(kp_clusters)
         n_labels = len(self.labels)
@@ -65,7 +82,7 @@ class KeypointMatcher:
                 label    = self.labels[il]
                 cluster = kpm.KeypointSet(target_image, kp_clusters[ic], ds_clusters[ic])
                 bounding_box = kpm.get_matching_boundingbox(template, cluster, self.matcher,
-                                                               MIN_MATCHES=10, MIN_INLIERS=10)
+                                                            MIN_MATCHES=10, MIN_INLIERS=10)
                 if bounding_box is not None:
                     new_object = DetectedObject(label, bounding_box)
                     detected_objects.append(new_object)
