@@ -23,11 +23,20 @@ def annotate_image_with_objects(image, detected_objects, correct_match=None):
 
     colours = { True: (0, 255, 0),
                 False: (0, 0, 255)}
+    yellow = (0, 255, 255)
+
+    # Font for annotation
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_size = 1
 
     annotated_image = image.copy()
     for i, iobject in enumerate(detected_objects):
         box_colour = colours[correct_match[i]]
-        cv2.polylines(annotated_image, [iobject.bounding_box], True, box_colour, 3, cv2.LINE_AA)
+        bounding_box = iobject.bounding_box
+        top_left_corner = (bounding_box[0][0], bounding_box[0][1])
+        cv2.polylines(annotated_image, [bounding_box], True, box_colour, 3, cv2.LINE_AA)
+        cv2.putText(annotated_image, iobject.label, top_left_corner,
+                    font, font_size, yellow, 3, cv2.LINE_AA)
     return annotated_image
 
 
