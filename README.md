@@ -33,6 +33,29 @@ thought-process followed in the analysis.
 3. [Validation of model (a): Collage of logos](collage_validation.ipynb)
 4. [Validation of model (b): BelgaLogos dataset](belgalogos_validation.ipynb)
 
+### Wrapping things up
+1. [Conclusion and summary](summary.md)
+
+## Running the model
+Included in this repository is a stand-alone version of the model which can be
+run on your own test images. Running it should be as simple as cloning this
+repository, and running (from the root directory of the repo):
+
+```Shell
+    ./run_model.py [training_set] <image filename1> ... <image filename N>
+```
+
+where `[training\_set]` can be either `logos` (which trains the model on 'ideal'
+versions of the logos) or 'live\_logos' (which trains the model on photographs of
+the logos).
+
+Here's an example:
+```Shell
+    ./run_model.py logos data/logos/collage.jpeg
+```
+
+![Collage](images/annotated_collage.jpeg)
+
 ## Running the notebooks
 
 The notebooks require the following python packages:

@@ -36,17 +36,22 @@ def annotate_image(model, test_image):
 
 
 def main(source, test_images):
+    print("Training...")
+
     # Initialise model
     SIFT = cv2.xfeatures2d.SIFT_create()
     SIFTMatcher = kpm.KeypointMatcher(SIFT, cv2.NORM_L2SQR)
     train_model_on_logos(SIFTMatcher, source)
+    print("Training complete")
 
+    print("Detecting logos...")
     for filename in test_images:
         test_image = cv2.imread(filename)
         result_image = annotate_image(SIFTMatcher, test_image)
         result_filename = "annotated_" + os.path.basename(filename)
         cv2.imwrite(result_filename, result_image)
-        print("Exported ", result_filename)
+        print(" Exported", result_filename)
+    print("Detecting logos complete")
 
 
 if __name__ == "__main__":
