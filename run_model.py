@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import lib.model as kpm
+import argparse
 import json, os, cv2, sys
 
 
@@ -33,13 +34,13 @@ def annotate_image(model, test_image):
     return annotated_image
 
 
-def main(argv):
+def main(source, test_images):
     # Initialise model
     SIFT = cv2.xfeatures2d.SIFT_create()
     SIFTMatcher = kpm.KeypointMatcher(SIFT, cv2.NORM_L2SQR)
-    train_model_on_logos(SIFTMatcher, "logos")
+    train_model_on_logos(SIFTMatcher, source)
 
-    for filename in argv[1:]:
+    for filename in test_images:
         test_image = cv2.imread(filename)
         result_image = annotate_image(SIFTMatcher, test_image)
         result_filename = "annotated_" + os.path.basename(filename)
@@ -48,4 +49,8 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('template_source', help="choice of source templates", choices=['logos'])
+    parser.add_argument('images', help="list of input images", nargs='*')
+    args = parser.parse_args()
+    main(args.template_source, args.images)
