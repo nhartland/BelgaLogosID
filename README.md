@@ -30,7 +30,7 @@ thought-process followed in the analysis.
 ### Implementation and validation
 1. [Implementation of model](implementation.ipynb)
 2. [Validation framework](validation_framework.ipynb)
-3. [Validation of model (a): collage of logos](collage_validation.ipynb)
+3. [Validation of model (a): Collage of logos](collage_validation.ipynb)
 4. [Validation of model (b): BelgaLogos dataset](belgalogos_validation.ipynb)
 
 ## Running the notebooks
