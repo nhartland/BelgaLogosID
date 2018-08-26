@@ -1,6 +1,9 @@
 # validation.py
 # code for the validation of the logo-detection model
 import numpy as np
+import pandas as pd
+import cv2
+import os
 
 
 def metadata_to_AABB(md):
@@ -69,3 +72,40 @@ def validate_detected_objects(metadata, detected_objects):
                 break
     return successful_match
 
+
+def study_matches(metadata, model):
+    """
+        For a provided list of image metadata and a matching model, count the
+        number of true and false positives detected in the images.  Returns a
+        pandas Series.
+    """
+    # Initialise counts
+    true_positives   = 0
+    actual_positives = 0
+    false_positives  = 0
+    image_count      = 0
+
+    unique_images = metadata["image_file"].unique()
+    for image in unique_images:
+        # Fetch corresponding metadata for this image
+        image_metadata = metadata[metadata["image_file"] == image]
+        # Read the image file
+        test_image = cv2.imread(os.path.join("data", "images", image))
+
+        # Run the model over the image and validate the results with the above algorithm
+        detected_objects = model.detect_objects(test_image)
+        correct_matches = validate_detected_objects(image_metadata, detected_objects)
+
+        actual_positives += len(image_metadata.index)
+        true_positives   += np.sum(correct_matches)
+        false_positives  += len(correct_matches) - np.sum(correct_matches)
+        image_count += 1
+
+    count_dict = { "true_positives": true_positives,
+                   "actual_positives": actual_positives,
+                   "true_positive_ratio": true_positives / actual_positives,
+                   "false_positives": false_positives,
+                   "false_positives_per_image": false_positives / image_count,
+                   "image_count": image_count}
+
+    return pd.Series(count_dict)
