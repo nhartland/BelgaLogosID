@@ -1,7 +1,6 @@
 # A class implementing a keypoint-matching object detector
 # for the BelgaLogos dataset.
-
-import keypoint_matching as kp_lib
+import lib.keypoint_matching as kpm
 from collections import namedtuple
 import cv2
 
@@ -45,18 +44,18 @@ class KeypointMatcher:
     def add_template(self, label, image):
         # Find template keypoints
         kp, desc = self.finder.detectAndCompute(image, None)
-        template = kp_lib.KeypointSet(image, kp, desc)
+        template = kpm.KeypointSet(image, kp, desc)
         self.templates.append(template)
         self.labels.append(label)
         # Find template inverse keypoints
         inverse_image = cv2.bitwise_not(image)
         kp, desc = self.finder.detectAndCompute(inverse_image, None)
-        template = kp_lib.KeypointSet(inverse_image, kp, desc)
+        template = kpm.KeypointSet(inverse_image, kp, desc)
         self.templates.append(template)
         self.labels.append(label)
 
     def detect_objects(self, target_image):
-        kp_clusters, ds_clusters = kp_lib.meanshift_keypoint_clusters(target_image, self.finder)
+        kp_clusters, ds_clusters = kpm.meanshift_keypoint_clusters(target_image, self.finder)
         n_clusters = len(kp_clusters)
         n_labels = len(self.labels)
         detected_objects = []
@@ -64,8 +63,8 @@ class KeypointMatcher:
             for il in range(n_labels):
                 template = self.templates[il]
                 label    = self.labels[il]
-                cluster = kp_lib.KeypointSet(target_image, kp_clusters[ic], ds_clusters[ic])
-                bounding_box = kp_lib.get_matching_boundingbox(template, cluster, self.matcher,
+                cluster = kpm.KeypointSet(target_image, kp_clusters[ic], ds_clusters[ic])
+                bounding_box = kpm.get_matching_boundingbox(template, cluster, self.matcher,
                                                                MIN_MATCHES=10, MIN_INLIERS=10)
                 if bounding_box is not None:
                     new_object = DetectedObject(label, bounding_box)

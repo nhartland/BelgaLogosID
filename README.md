@@ -20,17 +20,17 @@ thought-process followed in the analysis.
 
 ### Exploration of the dataset
 1. [Parsing and basic data validation](parsing.ipynb)
-2. [Initial study of the logo bounding-boxes](image_bb.ipynb)
+2. [Initial study of the logo bounding-boxes](boundingboxes.ipynb)
 3. [The automotive and fashion brand dataset](dataset.ipynb)
 
 ### Model survey and feasibility study
-1. [Survey of model options](models.ipynb)
-2. [Keypoint matching feasibility study](keypoint.ipynb)
+1. [Survey of model options](model_survey.ipynb)
+2. [Keypoint matching feasibility study](keypoint_study.ipynb)
 
 ### Implementation and validation
 1. [Implementation of model](implementation.ipynb)
 2. [Validation framework](validation_framework.ipynb)
-3. [Validation of model](validation.ipynb)
+3. [Validation of model](model_validation.ipynb)
 
 ## Running the notebooks
 
