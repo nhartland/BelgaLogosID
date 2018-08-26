@@ -47,7 +47,7 @@ repository, and running (from the root directory of the repo):
 ```
 
 where `[training_set]` can be either `logos` (which trains the model on 'ideal'
-versions of the logos) or `'live_logos'` (which trains the model on photographs of
+versions of the logos) or `live_logos` (which trains the model on photographs of
 the logos).
 
 Here's an example:
