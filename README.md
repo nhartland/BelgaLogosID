@@ -39,8 +39,14 @@ thought-process followed in the analysis.
 
 ## Running the model
 Included in this repository is a stand-alone version of the model which can be
-run on your own test images. Running it should be as simple as cloning this
-repository, and running (from the root directory of the repo):
+run on your own test images. It requires:
+
+ - numpy
+ - matplotlib
+ - scikit-learn
+ - OpenCV2
+
+Running it should be as simple as cloning this repository, and running (from the root directory of the repo):
 
 ```Shell
     ./run_model.py [training_set] <image filename1> ... <image filename N>
