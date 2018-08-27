@@ -44,7 +44,7 @@ run on your own test images. It requires:
  - numpy
  - matplotlib
  - scikit-learn
- - OpenCV2
+ - OpenCV
 
 Running it should be as simple as cloning this repository, and running (from the root directory of the repo):
 
