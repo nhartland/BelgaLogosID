@@ -38,7 +38,7 @@ to yield a working classifier within the time constraints. This was on the
 grounds of:
 
 1. **Dataset size:** the car and clothing subset of the BelgaLogos dataset is
-   not particuarly large. Some brands having less than ten annotated images for
+   not particularly large. Some brands having less than ten annotated images for
    training. Without more involved approaches (i.e artificial data synthesis),
    this dataset would not be suitable for use with modern state-of-the-art
    classifiers.
